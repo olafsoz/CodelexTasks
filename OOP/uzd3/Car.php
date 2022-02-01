@@ -6,7 +6,7 @@ class Car
     private FuelGauge $fuelGauge;
     private Odometer $odometer;
     private Lights $lights;
-    private Accumulator $power;
+    private accumulator $power;
     private array $tires;
     private bool $ignition = false;
 
@@ -19,7 +19,7 @@ class Car
         $this->fuelGauge = new FuelGauge($fuelGaugeAmount);
         $this->odometer = new Odometer();
         $this->lights = new Lights();
-        $this->power = new Accumulator();
+        $this->power = new accumulator();
         $this->tires = [
             new Tire('Front left'),
             new Tire('Front right'),

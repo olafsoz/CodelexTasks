@@ -1,6 +1,6 @@
 <?php
 
-class Accumulator
+class accumulator
 {
     private float $power = 100;
 
