@@ -1,9 +1,52 @@
 <?php
 
 
+class Card
+{
+    private string $suit;
+    private string $symbol;
+    private string $color;
+
+    public function __construct(string $suit, string $symbol)
+    {
+        $this->suit = $suit;
+        $this->symbol = $symbol;
+        $this->color = $this->setColor();
+    }
+
+    public function getSuit(): string
+    {
+        return $this->suit;
+    }
+
+    public function getSymbol(): string
+    {
+        return $this->symbol;
+    }
+
+    public function setColor(): string
+    {
+        if ($this->getSuit() == '♦' || $this->getSuit() == '♥') {
+            return "R";
+        } else {
+            return "B";
+        }
+    }
+
+    public function getColor(): string
+    {
+        return $this->color;
+    }
+
+    public function getDisplayValue(): string
+    {
+        return $this->symbol . $this->suit;
+    }
+}
+
 class Deck
 {
-    private array $cards = [];
+    private array $cards;
     private array $symbols = [
         '♣', '♦', '♥', '♠'
     ];
@@ -51,38 +94,6 @@ class Deck
     }
 }
 
-class Card
-{
-    private string $suit;
-    private string $symbol;
-
-    public function __construct(string $suit, string $symbol)
-    {
-        $this->suit = $suit;
-        $this->symbol = $symbol;
-    }
-
-    public function getSuit(): string
-    {
-        return $this->suit;
-    }
-
-    public function getSymbol(): string
-    {
-        return $this->symbol;
-    }
-
-    public function getDisplayValue(): string
-    {
-        return "{$this->symbol}.{$this->suit}";
-    }
-
-    public static function equalCards(Card $firstCard, Card $secondCard)
-    {
-        $firstCard->getSymbol() === $secondCard->getSymbol();
-    }
-}
-
 class Player
 {
     private array $cards = [];
@@ -97,11 +108,20 @@ class Player
         $this->cards[] = $card;
     }
 
+    public function remove(Player $p1, Player $p2): void
+    {
+        $key = array_rand($p2->getCards());
+        $p1->cards[] = $p2->cards[$key];
+        unset($p2->cards[$key]);
+        $p1->disband();
+        $p2->disband();
+    }
+
     public function disband()
     {
         $symbols = [];
         foreach ($this->cards as $card) {
-            $symbols[] = $card->getSymbol();
+            $symbols[] = $card->getSymbol() . $card->getColor();
         }
 
         $uniqueCardsCount = array_count_values($symbols);
@@ -110,7 +130,7 @@ class Player
             if ($count === 1) continue;
             if ($count === 2 || $count === 4) {
                 foreach ($this->cards as $index => $card) {
-                    if ($card->getSymbol() === (string)$symbol) {
+                    if ($card->getSymbol() . $card->getColor() === (string)$symbol) {
                         unset($this->cards[$index]);
                     }
                 }
@@ -118,7 +138,7 @@ class Player
             if ($count === 3) {
                 for ($i = 0; $i < 2; $i++) {
                     foreach ($this->cards as $index => $card) {
-                        if ($card->getSymbol() === (string)$symbol) {
+                        if ($card->getSymbol() . $card->getColor() === (string)$symbol) {
                             unset($this->cards[$index]);
                             break;
                         }
@@ -127,28 +147,15 @@ class Player
             }
         }
     }
-
-    public function disbandLastCards($obj)
-    {
-        foreach ($this->cards as $index => $card) {
-            foreach ($obj->getCards() as $ind => $crd) {
-                if ($card->getSymbol() === $crd->getSymbol()) {
-                    unset($this->cards[$index]);
-                    unset($obj->cards[$ind]);
-                }
-            }
-        }
-    }
 }
 
 class BlackPeter
 {
-
     private Deck $deck;
 
     public function __construct()
     {
-        $this->deck = new Deck;
+        $this->deck = new Deck();
     }
 
     public function getDeck(): Deck
@@ -160,11 +167,34 @@ class BlackPeter
     {
         return $this->deck->draw();
     }
+
+    public static function equalCards(Card $firstCard, Card $secondCard): bool
+    {
+        return $firstCard->getSymbol() === $secondCard->getSymbol();
+    }
+
+    public function printCards($player): void
+    {
+
+        foreach ($player->getCards() as $card) {
+            echo '|' . $card->getDisplayValue() . $card->getColor() . '|';
+        }
+        echo PHP_EOL;
+    }
+
+    public function checkWinner(Player $player): bool
+    {
+        if (count($player->getCards()) == 0) {
+            return true;
+        } else {
+            return false;
+        }
+    }
 }
 
 $game = new BlackPeter();
 $player = new Player();
-$npc = new Player();
+$bot = new Player();
 
 //Deal
 for ($i = 0; $i < 25; $i++) {
@@ -172,55 +202,43 @@ for ($i = 0; $i < 25; $i++) {
 }
 
 for ($i = 0; $i < 24; $i++) {
-    $npc->addCard($game->deal());
+    $bot->addCard($game->deal());
 }
 
-foreach ($player->getCards() as $card) {
-    echo "|" . $card->getDisplayValue() . "|";
-}
-echo PHP_EOL;
+echo "Player : ";
+$game->printCards($player);
 
-$player->disband();
+echo "Bot : ";
+$game->printCards($bot);
 
-foreach ($player->getCards() as $card) {
-    echo "|" . $card->getDisplayValue() . "|";
-}
+echo "-----------------------" . PHP_EOL;
 
-echo PHP_EOL;
-echo "-------------------------";
-echo PHP_EOL;
+while (true) {
+    $player->remove($bot, $player);
+    $player->remove($player, $bot);
 
-foreach ($npc->getCards() as $card) {
-    echo "|" . $card->getDisplayValue() . "|";
-}
-echo PHP_EOL;
-$npc->disband();
+    echo "Player : ";
+    $game->printCards($player);
+    echo "Bot : ";
+    $game->printCards($bot);
 
-foreach ($npc->getCards() as $card) {
-    echo "|" . $card->getDisplayValue() . "|";
-}
-echo PHP_EOL;
-echo "-------------------------";
-echo PHP_EOL;
+    echo "-----------------------" . PHP_EOL;
 
-$player->disbandLastCards($npc);
-
-if (empty($player->getCards())) {
-    echo "|   |";
-} else {
-    foreach ($player->getCards() as $card) {
-        echo "|" . $card->getDisplayValue() . "|";
+    if ($game->checkWinner($player)) {
+        echo "Player is the winner!!!";
+        exit;
     }
-}
-echo PHP_EOL;
 
-if (empty($npc->getCards())) {
-    echo "|   |";
-} else {
-    foreach ($npc->getCards() as $card) {
-        echo "|" . $card->getDisplayValue() . "|";
+    if ($game->checkWinner($bot)) {
+        echo "Bot is the winner!!!";
+        exit;
     }
+    sleep(1);
 }
+
+
+
+
 
 
 

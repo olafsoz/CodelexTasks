@@ -7,6 +7,7 @@ class Cards
     private array $deck = [];
     private int $sumPC = 0;
     private int $sumPlayer = 0;
+    private array $delArray= [];
 
     public function assignSuits(): void
     {
@@ -27,10 +28,29 @@ class Cards
         }
     }
 
+    public function shuffleDeck(): void {
+        shuffle($this->deck);
+    }
+
     public function getCard(): string
     {
-        shuffle($this->deck);
-        return $this->deck[rand(0, 51)];
+        $x = rand(0, count($this->deck) - 1);
+        $this->delArray[] = $this->deck[$x];
+        return $this->deck[$x];
+    }
+
+//    public function unsetCard()
+//    {
+//        $sr = array_search($this->delArray[0], $this->deck);
+//        unset($this->deck[$sr]);
+//        unset($this->delArray[0]);
+//        var_dump($sr);
+//
+//    }
+
+    public function getDeck(): array
+    {
+        return $this->deck;
     }
 
     public function calculatePlayerCardValue($card): string
@@ -68,10 +88,6 @@ class Cards
     {
         return $this->sumPC;
     }
-
-    public function getDeck(): array {
-        return $this->deck;
-    }
 }
 
 class Game
@@ -84,7 +100,7 @@ class Game
             return false;
         }
     }
-
+//    these methods should be here, not in the Card class
 //    public function getSumPlayer(): int
 //    {
 //        return $this->sumPlayer;
@@ -104,16 +120,21 @@ if ($value == 1) {
     $game = new Game();
     $play->assignSuits();
     $play->assignCards();
+    $play->shuffleDeck();
     $play->declareValues();
     echo $play->calculatePlayerCardValue($play->getCard()) . PHP_EOL;
+//    $play->unsetCard();
     echo $play->calculatePlayerCardValue($play->getCard()) . PHP_EOL;
+//    $play->unsetCard();
     echo "Sum : " . $play->getSumPlayer() . PHP_EOL;
     echo "------------------------" . PHP_EOL;
     while ($play->getSumPlayer() <= 21 && $play->getSumDealer() <= 21) {
         $option = readline("press [2] to hold or [3] to pick a card! ");
         if ($option == 2) {
             echo $play->calculateDealerCardValue($play->getCard()) . PHP_EOL;
+//            $play->unsetCard();
             echo $play->calculateDealerCardValue($play->getCard()) . PHP_EOL;
+//            $play->unsetCard();
             echo "Sum : " . $play->getSumDealer() . PHP_EOL;
             echo "------------------------" . PHP_EOL;
             for ($j = 0; $j < 5; $j++) {
@@ -135,6 +156,7 @@ if ($value == 1) {
                     }
                 } else {
                     echo $play->calculateDealerCardValue($play->getCard()) . PHP_EOL;
+//                    $play->unsetCard();
                     echo "Sum : " . $play->getSumDealer() . PHP_EOL;
                     echo "------------------------" . PHP_EOL;
                     if ($game->isItOver21($play->getSumDealer())) {
@@ -145,6 +167,7 @@ if ($value == 1) {
             }
         } elseif ($option == 3) {
             echo $play->calculatePlayerCardValue($play->getCard()) . PHP_EOL;
+//            $play->unsetCard();
             echo "Sum : " . $play->getSumPlayer() . PHP_EOL;
             echo "------------------------" . PHP_EOL;
             if ($game->isItOver21($play->getSumPlayer())) {

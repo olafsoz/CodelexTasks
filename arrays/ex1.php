@@ -7,14 +7,14 @@ $numbers = [
 ];
 
 //todo
-echo "Original numeric array: " . PHP_EOL . PHP_EOL;
+echo "Original numeric array: " . PHP_EOL;
 foreach($numbers as $number) {
     echo $number . PHP_EOL;
 }
 
 //todo
 sort($numbers);
-echo PHP_EOL. "Sorted numeric array: " . PHP_EOL . PHP_EOL;
+echo PHP_EOL. "Sorted numeric array: " . PHP_EOL;
 foreach($numbers as $number) {
     echo $number . PHP_EOL;
 }
@@ -29,13 +29,13 @@ $words = [
 ];
 
 //todo
-echo PHP_EOL . "Original string array: " . PHP_EOL . PHP_EOL;
+echo PHP_EOL . "Original string array: " . PHP_EOL;
 foreach($words as $word) {
     echo $word . PHP_EOL;
 }
 //todo
 sort($words);
-echo PHP_EOL . "Sorted string array: " . PHP_EOL . PHP_EOL;
+echo PHP_EOL . "Sorted string array: " . PHP_EOL;
 foreach($words as $word) {
     echo $word . PHP_EOL;
 }

@@ -21,10 +21,10 @@
 //        return $this->list;
 //    }
 //}
-////$p1 = new Person("Olafs", "Ozoliņš", "18272347462");
+//$p1 = new Person("Olafs", "Ozoliņš", "18272347462");
 //
 //$p2 = new Register();
-////$p2->add($p1);
+//$p2->add($p1);
 //
 //while (true) {
 //    echo "1. Add new person." . PHP_EOL;
@@ -49,18 +49,19 @@
 //ex1 over
 
 abstract class Forms {
-    protected string $color = "red";
+    protected string $name;
 
-    public function __construct($color) {
-        $this->color = $color;
+    public function __construct($name) {
+        $this->name = $name;
     }
-    public function getColor($color): string {
-        return $color;
+    public function getName(): string {
+        return $this->name;
     }
 }
 class Circle extends Forms{
-    protected int $radius;
-    public function __construct($radius) {
+    protected float $radius;
+    public function __construct($name, $radius) {
+        parent::__construct($name);
         $this->radius = $radius;
     }
     public function area() {
@@ -71,7 +72,8 @@ class Triangle extends Forms {
     protected int $height;
     protected int $base;
 
-    public function __construct($height, $base) {
+    public function __construct($name, $height, $base) {
+        parent::__construct($name);
         $this->height = $height;
         $this->base = $base;
     }
@@ -82,19 +84,18 @@ class Triangle extends Forms {
 class Rectangle extends Forms {
     protected int $side;
 
-    public function __construct($side) {
+    public function __construct($name, $side) {
+        parent::__construct($name);
         $this->side = $side;
     }
     public function area() {
         return pow($this->side, 2);
     }
 }
-class Together extends Forms {
+class Together {
     protected array $array = [];
-    public function add(Circle $circle, Triangle $triangle, Rectangle $rectangle) {
-        $this->array[] = $circle->area();
-        $this->array[] = $triangle->area();
-        $this->array[] = $rectangle->area();
+    public function add($object) {
+        $this->array[] = $object->area();
     }
     public function sum() {
         $s = 0;
@@ -105,15 +106,48 @@ class Together extends Forms {
     }
 }
 
-$circle = new Circle(3);
-$triangle = new Triangle(4, 7);
-$rectangle = new Rectangle(5);
-echo "Color : " . $circle->getColor("green") . "; Circle area : " . $circle->area() . PHP_EOL;
-echo "Color : " . $triangle->getColor("blue") . "; Triangle area : " . $triangle->area() . PHP_EOL;
-echo "Color : " . $rectangle->getColor("yellow") . "; Rectangle area : " . $rectangle->area() . PHP_EOL;
-$together = new Together("red");
-$together->add($circle, $triangle, $rectangle);
-echo $together->sum();
+$together = new Together();
+
+while(true) {
+    echo "[1] = Circle\n";
+    echo "[2] = Triangle\n";
+    echo "[3] = Rectangle\n";
+    echo "[4] = Print Sum of Added values\n";
+    echo "[5] = Exit\n";
+
+    $option = readline("Enter your choice : ");
+
+    switch($option) {
+        case 1:
+            $radius = readline("Enter the radius : ");
+            $circle = new Circle("Circle", $radius);
+            echo $circle->getName() . "'s area : " . number_format($circle->area(), 2);
+            echo PHP_EOL;
+            $together->add($circle);
+            break;
+        case 2:
+            $height = readline("Enter height : ");
+            $base = readline("Enter base : ");
+            $triangle = new Triangle("Triangle", $height, $base);
+            echo $triangle->getName() . "'s area : " . number_format($triangle->area(), 2);
+            echo PHP_EOL;
+            $together->add($triangle);
+            break;
+        case 3:
+            $side = readline("Enter one side of a rectangle : ");
+            $rectangle = new Rectangle("Rectangle", $side);
+            echo $rectangle->getName() . "'s area : " . number_format($rectangle->area(), 2);
+            echo PHP_EOL;
+            $together->add($rectangle);
+            break;
+        case 4:
+            echo "Sum of the all of the areas : " . round($together->sum(), 2);
+            echo PHP_EOL;
+            break;
+        case 5:
+            exit;
+    }
+}
 
 
 

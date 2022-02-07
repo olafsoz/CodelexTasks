@@ -24,9 +24,8 @@ class Dog {
     public function hasSameMotherAs($dog): bool {
         if ($this->mother == $dog->mother) {
             return true;
-        } else {
-            return false;
         }
+        return false;
     }
 }
 

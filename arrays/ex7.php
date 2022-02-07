@@ -1,52 +1,68 @@
 <?php
-// Jāņa tic tac toe
-$board = [
-    ['-', '-', '-'],
-    ['-', '-', '-'],
-    ['-', '-', '-'],
-];
-//$board1 = [];
-//$combos1 = [];
-//$gameFile = file_get_contents("default.txt");
-//$newLines = explode("
-//", $gameFile);
-//$boardFile = explode(" ", $newLines[0]);
-//$comboFile = explode(" | ", $newLines[1]);
-//foreach($comboFile as $combo) {
-//    $combo = explode("; ", $comboFile[0]);
-//}
+//$board = [
+//    ['-', '-', '-'],
+//    ['-', '-', '-'],
+//    ['-', '-', '-'],
+//];
+$board = [];
+$combinations = [];
+$gameFile = file_get_contents("default.txt");
+$newLines = explode("
+", $gameFile);
+$boardFile = explode(" ", $newLines[0]);
+$boardSize = str_split($boardFile[1]);
+
+for ($i = 0; $i < $boardSize[0]; $i++) {
+    $board[] = [];
+}
+foreach ($board as &$b) {
+    for ($j = 0; $j < $boardSize[2]; $j++) {
+        $b[$j] = "-";
+    }
+}
+
+$comboFile = explode("|", $newLines[1]);
+foreach ($comboFile as $index => $split) {
+    $x = explode(";", $split);
+    $combinations[] = $x;
+}
+foreach ($combinations as $index1 => $pos1) {
+    foreach ($pos1 as $index2 => $pos2) {
+        $combinations[$index1][$index2] = str_split($pos2);
+    }
+}
 
 $player1 = readline('Enter a symbol ');
 $player2 = readline('Enter a symbol ');
 
 $activePlayer = $player1;
 
-$combinations = [
-    [
-        [0, 0], [0, 1], [0, 2]
-    ],
-    [
-        [1, 0], [1, 1], [1, 2]
-    ],
-    [
-        [2, 0], [2, 1], [2, 2]
-    ],
-    [
-        [0, 0], [1, 0], [2, 0]
-    ],
-    [
-        [0, 1], [1, 1], [2, 1]
-    ],
-    [
-        [0, 2], [1, 2], [2, 2]
-    ],
-    [
-        [0, 0], [1, 1], [2, 2]
-    ],
-    [
-        [0, 2], [1, 1], [2, 0]
-    ]
-];
+//$combinations = [
+//    [
+//        [0, 0], [0, 1], [0, 2]
+//    ],
+//    [
+//        [1, 0], [1, 1], [1, 2]
+//    ],
+//    [
+//        [2, 0], [2, 1], [2, 2]
+//    ],
+//    [
+//        [0, 0], [1, 0], [2, 0]
+//    ],
+//    [
+//        [0, 1], [1, 1], [2, 1]
+//    ],
+//    [
+//        [0, 2], [1, 2], [2, 2]
+//    ],
+//    [
+//        [0, 0], [1, 1], [2, 2]
+//    ],
+//    [
+//        [0, 2], [1, 1], [2, 0]
+//    ]
+//];
 
 function winnerWinnerChickenDinner(array $combinations, array $board, string $activePlayer): bool
 {
