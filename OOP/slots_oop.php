@@ -52,7 +52,7 @@ class Board
         foreach ($this->combs as $combo) {
             foreach ($combo as $c) {
                 [$row, $column] = $c;
-                $results[] = [$row][$column];
+                $results[] = $this->board[$row][$column];
             }
             if (count(array_unique($results)) === 1) {
                 $this->counter += 1;
@@ -90,7 +90,7 @@ $tokens = readline("Enter all of your salary! ");
 while ($tokens > 0) {
     echo "Welcome to 'algas reizinātājs'!" . PHP_EOL;
     echo "You have $tokens tokens" . PHP_EOL;
-    $bet = (int)readline("Enter the bet amount or 'q' to exit ");
+    $bet = readline("Enter the bet amount or 'q' to exit : ");
     if ($bet == "q") {
         exit;
     }
@@ -102,6 +102,7 @@ while ($tokens > 0) {
 
         $a = new Board(["a", "z", "x"], 3, 4);
         $a->make();
+        echo PHP_EOL;
         $a->addCombos();
         $a->checkWin();
         $prize = ($bet * 2) * $a->counter();
